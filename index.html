@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <title>紫卡查價</title>
+  <link href="style/style.css" rel="stylesheet">
+  <script src="data.js"></script>
+</head>
+
+<body>
+  <h1>簡易紫卡查價</h1>
+  <div class="toolbar">
+    <select id="item-type-select" class="toolbar-item">
+      <option value="Melee Riven Mod">近戰</option>
+      <option value="Pistol Riven Mod">手槍</option>
+      <option value="Rifle Riven Mod">步槍</option>
+      <option value="Shotgun Riven Mod">霰彈槍</option>
+      <option value="Kitgun Riven Mod">KITGUN</option>
+      <option value="Zaw Riven Mod">ZAW</option>
+    </select>
+    <select id="compatibility-select" class="toolbar-item">
+    </select>
+    <label class="toolbar-item">重洗過<input type="checkbox" name="rerolled" id="rerolled"></label>
+  </div>
+  <table>
+    <tr>
+      <td>平均</td>
+      <td id="avg" class="td-number"></td>
+    </tr>
+    <tr>
+      <td>最低</td>
+      <td id="min" class="td-number"></td>
+    </tr>
+    <tr>
+      <td>最高</td>
+      <td id="max" class="td-number"></td>
+    </tr>
+    <tr>
+      <td>標準差</td>
+      <td id="stddev" class="td-number"></td>
+    </tr>
+    <tr>
+      <td>人氣</td>
+      <td id="pop" class="td-number"></td>
+    </tr>
+  </table>
+
+</body>
+
+</html>
+<!--
+  (\__/)
+  (•ㅅ•)
+-->
