@@ -1,6 +1,7 @@
 (function (){
-  const DATA_URL = "http://n9e5v4d8.ssl.hwcdn.net/repos/weeklyRivensPC.json";
-
+  const DATA_URL = "https://n9e5v4d8.ssl.hwcdn.net/repos/weeklyRivensPC.json";
+  const STEP = 80;
+  const STD_DEV_TO_GRAPH = 3.5;
   let data = null;
 
   // Add a function that will be called when the window is loaded.
@@ -77,6 +78,7 @@
           $("max").innerText = data[i].max;
           $("stddev").innerText = `${Math.round(data[i].stddev * 100) / 100}`;
           $("pop").innerText = `${Math.round(data[i].pop * 100) / 100}`;
+          graphPrice(data[i]);
           break;
         }
       }
@@ -88,10 +90,90 @@
           $("max").innerText = data[i].max;
           $("stddev").innerText = `${Math.round(data[i].stddev * 100) / 100}`;
           $("pop").innerText = `${Math.round(data[i].pop * 100) / 100}`;
+          graphPrice(data[i]);
           break;
         }
       }
     }
+  }
+
+  function graphPrice(data) {
+    let dataToGraph = [];
+    let xStep = Math.round((data.max - data.min) / STEP);
+    for(let i = 0; i < STEP; i++) {
+      let x = data.min + i * xStep;
+      if(x < data.avg + STD_DEV_TO_GRAPH * data.stddev) {
+        dataToGraph.push(getStdDistPoint(data, x));
+      }
+    }
+
+    dataToGraph.push(getStdDistPoint(data, Math.round(data.avg)));
+    dataToGraph.sort(function(a, b) {
+        return a.x - b.x;
+    });
+
+    let dataAverage = [getStdDistPoint(data, Math.round(data.avg))];
+
+    var ctx = document.getElementById('price-chart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+        datasets: [{
+            label: '價格',
+            pointRadius: 0,
+            data: dataToGraph
+          }, {
+            label: '平均',
+            backgroundColor: 'rgba(200, 65, 240, 0.5)',
+            borderColor: 'rgba(200, 65, 240, 0.5)',
+            pointBackgroundColor: 'rgba(200, 65, 240, 0.5)',
+            pointBorderColor: 'rgba(200, 65, 240, 0.5)',
+            data: dataAverage,
+            type: 'scatter'
+          }]
+        },
+        options: {
+          events: ['click'],
+          elements: {
+              line: {
+                  tension: 0.4 // disables bezier curves
+              }
+          },
+          scales: {
+              yAxes: [{
+                  scaleLabel: {
+                    display: true,
+                    labelString: "比例"
+                  },
+                  ticks: {
+                      beginAtZero: true
+                  }
+              }],
+              xAxes: [{
+                  scaleLabel: {
+                    display: true,
+                    labelString: "白金"
+                  },
+                  ticks: {
+                      beginAtZero: true,
+                      stepSize: 10
+                  },
+                  type: 'linear',
+                  position: 'bottom'
+              }]
+          }
+        }
+    });
+  }
+
+  function getStdDistPoint(data, x) {
+    let point = {};
+    point.x = x;
+    let sqrt2pi = Math.pow(2 * Math.PI, 0.5);
+    let diffXAvgSqr = Math.pow((point.x - data.avg), 2);
+    let ePow = -diffXAvgSqr / (2 * Math.pow(data.stddev, 2));
+    point.y = (1 / (data.stddev * sqrt2pi)) * Math.pow(Math.E, ePow);
+    return point
   }
 
   /* ----------------------------------- Helper Functions  ---------------------------------- */
